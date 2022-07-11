@@ -1,30 +1,40 @@
-exam_stats = {}
-submissions_count = {}
-
-while True:
-    data = input()
-    if data == 'exam finished':
-        break
-    tokens = data.split('-')
-    if len(tokens) == 3:
-        username, language, points = tokens
-        points = int(points)
-        if username not in exam_stats:
-            exam_stats[username] = points
-        if exam_stats[username] < points:
-            exam_stats[username] = points
-        if language not in submissions_count:
-            submissions_count[language] = 1
-        else:
-            submissions_count[language] += 1
+def add_submission_func(exams: dict, users: dict, user: str, lang: str, score: str):
+    current_score = int(score)
+    if lang in exams.keys():
+        exams[lang] += 1
     else:
-        username = tokens[0]
-        exam_stats.pop(username)
+        exams[lang] = 1
+    if user in users.keys():
+        if users[user] < current_score:
+            users[user] = current_score
+    else:
+        users[user] = current_score
+    return exams, users
 
 
-print('Results:')
-for username, points in sorted(exam_stats.items(), key=lambda x: (-x[1], x[0])):
-    print(f'{username} | {points}')
-print('Submissions:')
-for language, count in sorted(submissions_count.items()):
-    print(f'{language} - {count}')
+def ban_participant_func(users: dict, user: str):
+    if user in users.keys():
+        users.pop(user)
+    return users
+
+
+def get_exam_result_func(exams: dict, users: dict):
+    return f'Results:\n' + '\n'.join([f'{k} | {v}' for k, v in users.items()]) + \
+           '\nSubmissions:\n' + '\n'.join([f'{k} - {v}' for k, v in exams.items()])
+
+
+exam_submissions = {}
+user_submissions = {}
+
+input_line = input()
+while input_line != 'exam finished':
+    if 'banned' in input_line:
+        command = input_line.split('-')
+        username = command[0]
+        user_submissions = ban_participant_func(user_submissions, username)
+    else:
+        username, language, points = input_line.split('-')
+        exam_submissions, user_submissions = add_submission_func(exam_submissions, user_submissions, username, language,
+                                                                 points)
+    input_line = input()
+print(get_exam_result_func(exam_submissions, user_submissions))
