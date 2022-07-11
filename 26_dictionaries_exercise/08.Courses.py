@@ -1,83 +1,10 @@
-courses = {}
+from collections import defaultdict
 
-while True:
-    tokens = input()
-    if tokens == 'end':
-        break
-    course_name, student = tokens.split(' : ')
-    if course_name not in courses:
-        courses[course_name] = [student]
-    else:
-        courses[course_name].append(student)
+command_line = input()
+course_dict = defaultdict(list)
+while command_line != 'end':
+    course, student = command_line.split(' : ')
+    course_dict[course].append(student)
+    command_line = input()
 
-result = []
-
-for course_name, students in sorted(courses.items(), key=lambda x: -len(x[1])):
-    result.append(f'{course_name}: {len(students)}')
-    for student in sorted(students):
-        result.append(f'-- {student}')
-
-print('\n'.join(result))
-
-# from collections import defaultdict
-#
-#
-# class Student:
-#     def __init__(self, name: str) -> None:
-#         self.name = name
-#
-#
-# class Course:
-#     def __init__(self, name: str) -> None:
-#         self.name = name
-#         self.students = []
-#
-#     def enroll(self, student: Student):
-#         self.students.append(student)
-#
-#
-# class Program:
-#     def __init__(self) -> None:
-#         self.courses = defaultdict(list)
-#
-#     def add_course(self, c_name: str, s_name: str):
-#         new_course = True
-#         for name, value in self.courses.items():
-#             course = value[0]
-#             if name == c_name:
-#                 new_course = False
-#                 course.enroll(Student(s_name))
-#         if new_course:
-#             course = Course(c_name)
-#             course.enroll(Student(s_name))
-#             self.courses[c_name].append(course)
-#
-#     def __repr__(self) -> str:
-#
-#         def len_sort_fn(value: list):
-#             course = value[0]
-#             return -len(course.students)
-#
-#         def ab_sort_fn(student: Student):
-#             return student.name
-#
-#         result = []
-#         for value in sorted(self.courses.values(), key=len_sort_fn):
-#             course = value[0]
-#             result.append(f'{course.name}: {len(course.students)}')
-#             for student in sorted(course.students, key=ab_sort_fn):
-#                 result.append(f'-- {student.name}')
-#         result = '\n'.join(result)
-#         return result
-#
-#
-# p = Program()
-#
-# while True:
-#     tokens = input()
-#     if tokens == 'end':
-#         break
-#     course_name, student_name = tokens.split(' : ')
-#     p.add_course(course_name, student_name)
-#
-# print(p)
+print(''.join([f'{k}: {len(v)}\n' + ''.join([f'-- {s}\n' for s in v]) for k, v in course_dict.items()]))
