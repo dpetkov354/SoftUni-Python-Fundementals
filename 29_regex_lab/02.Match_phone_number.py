@@ -1,10 +1,10 @@
 import re
 
-
-data = input()
-pattern = r'(^|(?<=\s))(?P<number>\+359(?P<sep>\s|\-)2(?P=sep)\d{3}(?P=sep)\d{4})((?=,)|$)'
-
-matches = []
-for i in re.finditer(pattern, data):
-    matches.append(i.group('number'))
-print(', '.join(matches))
+numbers = input()
+regex = r'\+359( |-)2(\1)\d{3}(\1)\d{4}\b'
+matches = re.finditer(regex, numbers)
+res = []
+for match in matches:
+    match_str = match.group(0)
+    res.append(match_str)
+print(*res, sep=', ')
